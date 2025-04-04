@@ -1,0 +1,47 @@
+cmake_minimum_required(VERSION 3.15)
+project(OpenMP_MPI_Project VERSION 0.1.0)
+
+# C++ standard
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Enable testing (optional)
+include(CTest)
+enable_testing()
+
+# MPI Configuration
+set(MPI_DIR "C:/Program Files (x86)/Microsoft SDKs/MPI")
+
+# MS-MPI Configuration
+set(MSMPI_INCLUDE_DIR "${MPI_DIR}/Include")
+set(MSMPI_LIBRARY_DIR "${MPI_DIR}/Lib/x64")
+
+# Add MS-MPI to include directories
+include_directories(${MSMPI_INCLUDE_DIR})
+
+# OpenMP Configuration
+find_package(OpenMP REQUIRED)
+
+# Find all .cpp files in the MPI folder
+file(GLOB MPI_SOURCES "MPI/*.cpp")
+
+# Loop through each source file and create an executable
+foreach(source_file ${MPI_SOURCES})
+    # Get the file name without the path (i.e., just the file name)
+    get_filename_component(executable_name ${source_file} NAME_WE)
+
+    # Create an executable for each source file
+    add_executable(${executable_name} ${source_file})
+
+    # Link OpenMP Libraries
+    target_link_libraries(${executable_name} PRIVATE OpenMP::OpenMP_CXX)
+
+    # Link MS-MPI Libraries
+    target_link_directories(${executable_name} PRIVATE ${MSMPI_LIBRARY_DIR})
+    target_link_libraries(${executable_name} PRIVATE msmpi)
+endforeach()
+
+# Package Configuration (optional)
+set(CPACK_PROJECT_NAME ${PROJECT_NAME})
+set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
+include(CPack)

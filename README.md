@@ -1,0 +1,1 @@
+A repository created to learn multithreading and multi-core processing in C/C++ on both Windows and Linux
